@@ -2,18 +2,49 @@ import SwiftUI
 
 struct HomeViews: View {
     
+    let userName: String
     let selectedActivities: Set<String>
     
     @State private var completedActivities: Set<String> = []
-    @State private var note: String = ""
+    @State private var selectedFilter = "Semua"
+    
+    
+    // MARK: Activity Category Mapping
+    
+    let activityCategory: [String: String] = [
+        "Minum Air 2L": "Kesehatan",
+        "Tidur 8 Jam": "Kesehatan",
+        "Cek Kesehatan": "Kesehatan",
+        
+        "Olahraga 30 Menit": "Kebugaran",
+        "Stretching Pagi": "Kebugaran",
+        "Jalan 10.000 Langkah": "Kebugaran",
+        
+        "Membaca 10 Halaman": "Pengetahuan",
+        "Belajar Skill Baru": "Pengetahuan",
+        "Menonton Edukasi": "Pengetahuan",
+        
+        "Catat Pengeluaran": "Keuangan",
+        "Menabung Harian": "Keuangan",
+        "Belajar Investasi": "Keuangan",
+        
+        "Belajar Skill Karir": "Karir",
+        "Update CV": "Karir",
+        "Networking": "Karir",
+        
+        "Meditasi 10 Menit": "Mental",
+        "Jurnal Harian": "Mental",
+        "Digital Detox": "Mental"
+    ]
+    
     
     var body: some View {
         
-        VStack(spacing: 0) {
+        VStack(spacing:0) {
             
             ScrollView {
                 
-                VStack(alignment: .leading, spacing: 24) {
+                VStack(alignment:.leading, spacing:28) {
                     
                     greeting
                     
@@ -21,18 +52,14 @@ struct HomeViews: View {
                     
                     progressCard
                     
-                    todayHabits
-                    
-                    quickNotes
+                    habitSection
                     
                 }
                 .padding(24)
             }
-            
-            bottomTabBar
-            
+                        
         }
-        .background(Color(hex:"#F8FAFC"))
+        .background(Color.backgroundApp)
     }
 }
 
@@ -42,9 +69,9 @@ extension HomeViews {
     
     var greeting: some View {
         
-        Text("Hi, Iyan 👋")
-            .font(.system(size: 34, weight: .bold))
-            .foregroundColor(Color(hex:"#3A2E1F"))
+        Text("Hi, \(userName)")
+            .font(.system(size:34, weight:.bold))
+            .foregroundColor(Color.textPrimary)
     }
     
     
@@ -52,32 +79,32 @@ extension HomeViews {
     
     var weekTracker: some View {
         
-        VStack(spacing:10) {
+        VStack(spacing:12) {
             
             HStack {
-                weekDay("Sen")
-                weekDay("Sel")
-                weekDay("Rab")
-                weekDay("Kam", selected:true)
-                weekDay("Jum")
-                weekDay("Sab")
-                weekDay("Min")
+                day("Sen")
+                day("Sel")
+                day("Rab")
+                day("Kam", selected:true)
+                day("Jum")
+                day("Sab")
+                day("Min")
             }
             
             HStack {
-                weekNumber("30")
-                weekNumber("31")
-                weekNumber("32")
-                weekNumber("33", active:true)
-                weekNumber("34")
-                weekNumber("35")
-                weekNumber("36")
+                date("30")
+                date("31")
+                date("32")
+                date("33", active:true)
+                date("34")
+                date("35")
+                date("36")
             }
         }
     }
     
     
-    func weekDay(_ text:String, selected:Bool = false) -> some View {
+    func day(_ text:String, selected:Bool = false) -> some View {
         
         Text(text)
             .font(.caption)
@@ -87,16 +114,16 @@ extension HomeViews {
     }
     
     
-    func weekNumber(_ text:String, active:Bool = false) -> some View {
+    func date(_ text:String, active:Bool = false) -> some View {
         
         Text(text)
             .font(.system(size:18, weight:.bold))
-            .foregroundColor(active ? .white : Color(hex:"#6E5B3D"))
+            .foregroundColor(active ? .white : Color.textPrimary)
             .frame(width:40,height:40)
             .background(
                 active ?
-                Color(hex:"#B08A00") :
-                Color(hex:"#E9E3D4")
+                Color.primaryBrand :
+                Color.iconBackground
             )
             .clipShape(Circle())
             .frame(maxWidth:.infinity)
@@ -109,11 +136,11 @@ extension HomeViews {
         
         VStack(alignment:.leading, spacing:12) {
             
-            Text("Progres Hari ini")
+            Text("Progres Hari Ini")
                 .font(.system(size:18, weight:.bold))
                 .foregroundColor(.white)
             
-            ProgressView(value: progress)
+            ProgressView(value:progress)
                 .tint(.white)
             
             HStack {
@@ -124,15 +151,15 @@ extension HomeViews {
                 
                 Spacer()
                 
-                Text("\(Int(progress * 100))%")
+                Text("\(Int(progress*100))%")
                     .font(.caption)
                     .foregroundColor(.white)
             }
         }
         .padding()
-        .background(Color(hex:"#F2B705"))
+        .background(Color.primaryBrand)
         .cornerRadius(18)
-        .shadow(color:.black.opacity(0.1), radius:8)
+        .shadow(color:.black.opacity(0.08), radius:10)
     }
     
     
@@ -145,24 +172,113 @@ extension HomeViews {
     }
     
     
-    // MARK: Today's Habits
+    // MARK: Filtered Activities
     
-    var todayHabits: some View {
+    var filteredActivities: [String] {
         
-        VStack(alignment:.leading, spacing:12) {
+        if selectedFilter == "Semua" {
+            return Array(selectedActivities)
+        }
+        
+        return selectedActivities.filter {
+            activityCategory[$0] == selectedFilter
+        }
+    }
+    
+    
+    // MARK: Habit Section
+    
+    var habitSection: some View {
+        
+        VStack(alignment:.leading, spacing:16) {
             
-            Text("Today's Habits")
-                .font(.system(size:22, weight:.bold))
-                .foregroundColor(Color(hex:"#5B3B5B"))
+            HStack {
+                
+                Text("Aktivitas Hari Ini")
+                    .font(.system(size:22, weight:.bold))
+                    .foregroundColor(Color.textPrimary)
+                
+                Spacer()
+                
+                filterMenu
+                
+            }
             
-            ForEach(Array(selectedActivities), id:\.self) { activity in
+            VStack(spacing:12) {
                 
-                habitRow(activity)
-                
+                ForEach(filteredActivities, id:\.self) { activity in
+                    
+                    habitRow(activity)
+                    
+                }
             }
         }
     }
     
+    
+    // MARK: Improved Filter Menu
+    
+    var filterMenu: some View {
+        
+        Menu {
+            
+            filterItem("Semua")
+            filterItem("Kesehatan")
+            filterItem("Kebugaran")
+            filterItem("Pengetahuan")
+            filterItem("Keuangan")
+            filterItem("Karir")
+            filterItem("Mental")
+            
+        } label: {
+            
+            HStack(spacing:6) {
+                
+                Text(selectedFilter)
+                    .font(.system(size:14, weight:.semibold))
+                    .lineLimit(1)
+                
+                Image(systemName:"chevron.down")
+                    .font(.system(size:12, weight:.bold))
+            }
+            .foregroundColor(Color.primaryBrand)
+            .padding(.horizontal,14)
+            .padding(.vertical,8)
+            .background(
+                Capsule()
+                    .fill(Color.primaryBrand.opacity(0.15))
+            )
+            .overlay(
+                Capsule()
+                    .stroke(Color.primaryBrand.opacity(0.35), lineWidth:1)
+            )
+        }
+    }
+    
+    
+    func filterItem(_ category:String) -> some View {
+        
+        Button {
+            
+            withAnimation(.easeInOut(duration:0.2)) {
+                selectedFilter = category
+            }
+            
+        } label: {
+            
+            if selectedFilter == category {
+                
+                Label(category, systemImage:"checkmark")
+                
+            } else {
+                
+                Text(category)
+            }
+        }
+    }
+    
+    
+    // MARK: Habit Row
     
     func habitRow(_ activity:String) -> some View {
         
@@ -174,12 +290,12 @@ extension HomeViews {
                     completed ?
                   "checkmark.circle.fill" :
                   "circle")
-                .font(.title3)
                 .foregroundColor(
                     completed ?
                     Color.green :
                     Color.gray
                 )
+                .font(.title3)
             
             Text(activity)
                 .font(.system(size:16, weight:.medium))
@@ -187,9 +303,9 @@ extension HomeViews {
             Spacer()
         }
         .padding()
-        .background(Color.white)
+        .background(Color.cardBackground)
         .cornerRadius(14)
-        .shadow(color:.black.opacity(0.03), radius:5)
+        .shadow(color:.black.opacity(0.03), radius:6)
         .onTapGesture {
             
             if completed {
@@ -199,79 +315,16 @@ extension HomeViews {
             }
         }
     }
-    
-    
-    // MARK: Quick Notes
-    
-    var quickNotes: some View {
-        
-        VStack(alignment:.leading, spacing:12) {
-            
-            Text("Quick Notes")
-                .font(.system(size:22, weight:.bold))
-                .foregroundColor(Color(hex:"#5B3B5B"))
-            
-            TextEditor(text: $note)
-                .frame(height:120)
-                .padding()
-                .background(Color(hex:"#5B3B5B"))
-                .cornerRadius(16)
-                .foregroundColor(.white)
-        }
-    }
-    
-    
-    // MARK: Bottom Tab Bar
-    
-    var bottomTabBar: some View {
-        
-        HStack {
-            
-            tabItem("checkmark.circle","Habit", active:true)
-            
-            Spacer()
-            
-            tabItem("chart.bar","Progress")
-            
-            Spacer()
-            
-            tabItem("book","Diary")
-            
-            Spacer()
-            
-            tabItem("person","Profile")
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius:30)
-                .fill(Color.gray.opacity(0.3))
-        )
-        .padding()
-    }
-    
-    
-    func tabItem(
-        _ icon:String,
-        _ title:String,
-        active:Bool = false
-    ) -> some View {
-        
-        VStack {
-            
-            Image(systemName: icon)
-                .font(.title3)
-            
-            Text(title)
-                .font(.caption)
-        }
-        .foregroundColor(active ? Color.green : .white)
-    }
 }
 
 #Preview {
-    HomeViews(selectedActivities:[
-        "Minum Air 2L",
-        "Olahraga 30 Menit",
-        "Membaca 10 Halaman"
-    ])
+    
+    HomeViews(
+        userName:"Iyan",
+        selectedActivities:[
+            "Minum Air 2L",
+            "Olahraga 30 Menit",
+            "Membaca 10 Halaman"
+        ]
+    )
 }

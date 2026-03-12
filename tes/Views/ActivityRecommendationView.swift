@@ -3,11 +3,14 @@ import UIKit
 
 struct ActivityRecommendationView: View {
     
+    
     let selectedCategories: Set<String>
     
     @State private var selectedActivities: Set<String> = []
     @State private var expandedCategories: Set<String> = []
     @State private var goToHome = false
+    
+    let userName: String
     
     var body: some View {
         
@@ -34,8 +37,8 @@ struct ActivityRecommendationView: View {
             
             .navigationDestination(isPresented: $goToHome) {
                 
-                HomeViews(
-                    selectedActivities: selectedActivities
+                BottomNavbar(
+                    userName: userName, selectedActivities: selectedActivities
                 )
             }
         }
@@ -316,6 +319,7 @@ extension ActivityRecommendationView {
 
 #Preview {
     ActivityRecommendationView(
-        selectedCategories:["Kesehatan","Karir"]
+        selectedCategories: ["Kesehatan","Karir"],
+        userName: "Iyan"
     )
 }

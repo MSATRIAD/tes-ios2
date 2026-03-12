@@ -10,7 +10,6 @@
 		36EF942F2F603ED00022C7B6 /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = 36EF942E2F603ED00022C7B6 /* GoogleGenerativeAI */; };
 		36EF94372F6059060022C7B6 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36EF94362F6059060022C7B6 /* WidgetKit.framework */; };
 		36EF94392F6059060022C7B6 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36EF94382F6059060022C7B6 /* SwiftUI.framework */; };
-		36EF944A2F6059070022C7B6 /* TesWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 36EF94342F6059060022C7B6 /* TesWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,7 +29,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				36EF944A2F6059070022C7B6 /* TesWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -38,8 +36,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		36EF93FF2F602B280022C7B6 /* tes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tes.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		36EF94342F6059060022C7B6 /* TesWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TesWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		36EF93FF2F602B280022C7B6 /* tes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = tes.app; path = "/Users/yusufdk2709/Documents/tes-ios2/build/Debug/tes.app"; sourceTree = "<absolute>"; };
+		36EF94342F6059060022C7B6 /* TesWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = TesWidgetExtension.appex; path = "/Users/yusufdk2709/Documents/tes-ios2/build/Debug-iphoneos/TesWidgetExtension.appex"; sourceTree = "<absolute>"; };
 		36EF94362F6059060022C7B6 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		36EF94382F6059060022C7B6 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -97,17 +95,7 @@
 				36EF94012F602B280022C7B6 /* tes */,
 				36EF943A2F6059060022C7B6 /* TesWidget */,
 				36EF94352F6059060022C7B6 /* Frameworks */,
-				36EF94002F602B280022C7B6 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		36EF94002F602B280022C7B6 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				36EF93FF2F602B280022C7B6 /* tes.app */,
-				36EF94342F6059060022C7B6 /* TesWidgetExtension.appex */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		36EF94352F6059060022C7B6 /* Frameworks */ = {
@@ -200,7 +188,7 @@
 				36EF942D2F603ED00022C7B6 /* XCRemoteSwiftPackageReference "generative-ai-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 36EF94002F602B280022C7B6 /* Products */;
+			productRefGroup = 36EF93F62F602B280022C7B6;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (

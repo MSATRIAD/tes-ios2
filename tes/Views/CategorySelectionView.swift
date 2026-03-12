@@ -14,6 +14,8 @@ struct CategorySelectionView: View {
         "Mental"
     ]
     
+    let userName: String
+    
     // MARK: State
     
     @State private var selectedCategories: Set<String> = []
@@ -46,7 +48,7 @@ struct CategorySelectionView: View {
             .navigationDestination(isPresented: $navigateToActivities) {
                 
                 ActivityRecommendationView(
-                    selectedCategories: selectedCategories
+                    selectedCategories: selectedCategories, userName: userName
                 )
             }
         }
@@ -229,5 +231,7 @@ extension CategorySelectionView {
 }
 
 #Preview {
-    CategorySelectionView()
+    CategorySelectionView(
+                userName: "Iyan"
+    )
 }
