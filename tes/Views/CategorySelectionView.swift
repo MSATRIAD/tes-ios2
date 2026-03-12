@@ -20,8 +20,6 @@ struct CategorySelectionView: View {
     @State private var navigateToActivities = false
     
     
-    // MARK: Body
-    
     var body: some View {
         
         NavigationStack {
@@ -43,10 +41,7 @@ struct CategorySelectionView: View {
                 continueButton
                 
             }
-            .background(Color(hex:"#F8FAFC"))
-            
-            
-            // Navigation
+            .background(Color.backgroundApp)
             
             .navigationDestination(isPresented: $navigateToActivities) {
                 
@@ -68,17 +63,17 @@ extension CategorySelectionView {
             
             Text("Apa yang ingin kamu tingkatkan?")
                 .font(.system(size: 28, weight: .bold))
-                .foregroundColor(Color(hex:"#1E293B"))
+                .foregroundColor(Color.textPrimary)
                 .fixedSize(horizontal:false, vertical:true)
             
             Text("Pilih hingga 3 kategori yang paling penting untukmu saat ini.")
                 .font(.subheadline)
-                .foregroundColor(Color(hex:"#64748B"))
+                .foregroundColor(Color.textSecondary)
                 .fixedSize(horizontal:false, vertical:true)
             
             Text("\(selectedCategories.count)/3 dipilih")
                 .font(.caption)
-                .foregroundColor(Color(hex:"#64748B"))
+                .foregroundColor(Color.textSecondary)
         }
     }
     
@@ -117,7 +112,7 @@ extension CategorySelectionView {
                 .background(
                     selectedCategories.isEmpty ?
                     Color.gray.opacity(0.2) :
-                    Color(hex:"#4F46E5")
+                    Color.primaryBrand
                 )
                 .foregroundColor(.white)
                 .cornerRadius(14)
@@ -140,19 +135,19 @@ extension CategorySelectionView {
             
             Image(systemName: iconFor(category))
                 .font(.system(size:18))
-                .foregroundColor(isSelected ? .white : Color(hex:"#4F46E5"))
+                .foregroundColor(isSelected ? .white : Color.primaryBrand)
                 .frame(width:42,height:42)
                 .background(
                     isSelected ?
-                    Color(hex:"#4F46E5") :
-                    Color(hex:"#EEF2FF")
+                    Color.primaryBrand :
+                    Color.iconBackground
                 )
                 .cornerRadius(12)
             
             
             Text(category)
                 .font(.system(size:18, weight:.medium))
-                .foregroundColor(Color(hex:"#1E293B"))
+                .foregroundColor(Color.textPrimary)
             
             
             Spacer()
@@ -161,16 +156,16 @@ extension CategorySelectionView {
             Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                 .foregroundColor(
                     isSelected ?
-                    Color(hex:"#4F46E5") :
+                    Color.primaryBrand :
                     Color.gray.opacity(0.4)
                 )
         }
         .padding()
-        .background(isSelected ? Color(hex:"#EEF2FF") : Color.white)
+        .background(isSelected ? Color.iconBackground.opacity(0.6) : Color.cardBackground)
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius:16)
-                .stroke(isSelected ? Color(hex:"#4F46E5") : Color.clear, lineWidth:1.5)
+                .stroke(isSelected ? Color.primaryBrand : Color.clear, lineWidth:1.5)
         )
         .shadow(color:Color.black.opacity(0.03), radius:6, x:0, y:3)
         .onTapGesture {

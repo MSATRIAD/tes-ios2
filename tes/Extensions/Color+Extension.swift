@@ -4,9 +4,12 @@
 //
 //  Created by Yusuf Dwi Kurniawan on 11/03/26.
 //
+
 import SwiftUI
 
 extension Color {
+    
+    // MARK: Hex Support
     
     init(hex: String) {
         
@@ -18,9 +21,16 @@ extension Color {
         let a, r, g, b: UInt64
         
         switch hex.count {
+            
         case 6:
             (a, r, g, b) = (255,
                             int >> 16,
+                            int >> 8 & 0xFF,
+                            int & 0xFF)
+            
+        case 8:
+            (a, r, g, b) = (int >> 24,
+                            int >> 16 & 0xFF,
                             int >> 8 & 0xFF,
                             int & 0xFF)
             
@@ -36,4 +46,30 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
+}
+
+extension Color {
+    
+    // MARK: Brand Colors (Impruv Design System)
+    
+    /// Main brand color (Splash Yellow)
+    static let primaryBrand = Color(hex: "#F2B705")
+    
+    /// Light background
+    static let backgroundApp = Color(hex: "#F8FAFC")
+    
+    /// Card background
+    static let cardBackground = Color.white
+    
+    /// Primary text
+    static let textPrimary = Color(hex: "#1E293B")
+    
+    /// Secondary text
+    static let textSecondary = Color(hex: "#64748B")
+    
+    /// Icon background (light yellow)
+    static let iconBackground = Color(hex: "#FFF3C4")
+    
+    /// Border subtle
+    static let borderLight = Color.gray.opacity(0.15)
 }
