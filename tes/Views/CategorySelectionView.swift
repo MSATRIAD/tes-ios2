@@ -1,68 +1,66 @@
 import SwiftUI
-import UIKit
+import SwiftData
 
 struct CategorySelectionView: View {
     
-    // MARK: Data
-    
-    let categories = [
-        "Kesehatan",
-        "Kebugaran",
-        "Pengetahuan",
-        "Keuangan",
-        "Karir",
-        "Mental"
-    ]
-    
     let userName: String
+    var isFromProfile: Bool = false
+    @Binding var isPresented: Bool
     
-    // MARK: State
+    @Environment(\.modelContext) private var modelContext
+    @Query private var allActivityItems: [ActivityItem]
+    
+    var categories: [String] {
+        let fetchedCategories = allActivityItems.map { $0.category }
+        return Array(Set(fetchedCategories)).sorted()
+    }
     
     @State private var selectedCategories: Set<String> = []
     @State private var navigateToActivities = false
     
+    init(userName: String, isFromProfile: Bool = false, isPresented: Binding<Bool> = .constant(true)) {
+        self.userName = userName
+        self.isFromProfile = isFromProfile
+        self._isPresented = isPresented
+    }
     
     var body: some View {
-        
-        NavigationStack {
-            
-            VStack(spacing: 0) {
-                
-                ScrollView {
-                    
-                    VStack(alignment: .leading, spacing: 28) {
-                        
-                        header
-                        
-                        categoryList
-                        
-                    }
-                    .padding(24)
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 28) {
+                    header
+                    categoryList
                 }
-                
-                continueButton
-                
+                .padding(24)
             }
-            .background(Color.backgroundApp)
-            
-            .navigationDestination(isPresented: $navigateToActivities) {
-                
-                ActivityRecommendationView(
-                    selectedCategories: selectedCategories, userName: userName
-                )
+            continueButton
+        }
+        .background(Color.backgroundApp)
+        .toolbar {
+            if isFromProfile {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Batal") {
+                        isPresented = false
+                    }
+                    .foregroundColor(Color.primaryBrand)
+                }
             }
+        }
+        .navigationDestination(isPresented: $navigateToActivities) {
+            ActivityRecommendationView(
+                selectedCategories: selectedCategories,
+                userName: userName,
+                isFromProfile: isFromProfile,
+                isPresented: $isPresented
+            )
         }
     }
 }
 
 extension CategorySelectionView {
     
-    // MARK: Header
-    
     var header: some View {
-        
         VStack(alignment: .leading, spacing: 8) {
-            
             Text("Apa yang ingin kamu tingkatkan?")
                 .font(.system(size: 28, weight: .bold))
                 .foregroundColor(Color.textPrimary)
@@ -79,34 +77,19 @@ extension CategorySelectionView {
         }
     }
     
-    
-    // MARK: Category List
-    
     var categoryList: some View {
-        
         VStack(spacing: 14) {
-            
             ForEach(categories, id: \.self) { category in
-                
                 categoryCard(category)
-                
             }
         }
     }
     
-    
-    // MARK: Continue Button
-    
     var continueButton: some View {
-        
         Button {
-            
             UIImpactFeedbackGenerator(style:.medium).impactOccurred()
-            
             navigateToActivities = true
-            
         } label: {
-            
             Text("Pilih Aktivitas (\(selectedCategories.count))")
                 .font(.system(size:17, weight:.semibold))
                 .frame(maxWidth:.infinity)
@@ -126,41 +109,25 @@ extension CategorySelectionView {
 
 extension CategorySelectionView {
     
-    
-    // MARK: Category Card
-    
     func categoryCard(_ category:String) -> some View {
-        
         let isSelected = selectedCategories.contains(category)
         
         return HStack(spacing: 16) {
-            
             Image(systemName: iconFor(category))
                 .font(.system(size:18))
                 .foregroundColor(isSelected ? .white : Color.primaryBrand)
                 .frame(width:42,height:42)
-                .background(
-                    isSelected ?
-                    Color.primaryBrand :
-                    Color.iconBackground
-                )
+                .background(isSelected ? Color.primaryBrand : Color.iconBackground)
                 .cornerRadius(12)
-            
             
             Text(category)
                 .font(.system(size:18, weight:.medium))
                 .foregroundColor(Color.textPrimary)
             
-            
             Spacer()
             
-            
             Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                .foregroundColor(
-                    isSelected ?
-                    Color.primaryBrand :
-                    Color.gray.opacity(0.4)
-                )
+                .foregroundColor(isSelected ? Color.primaryBrand : Color.gray.opacity(0.4))
         }
         .padding()
         .background(isSelected ? Color.iconBackground.opacity(0.6) : Color.cardBackground)
@@ -170,68 +137,31 @@ extension CategorySelectionView {
                 .stroke(isSelected ? Color.primaryBrand : Color.clear, lineWidth:1.5)
         )
         .shadow(color:Color.black.opacity(0.03), radius:6, x:0, y:3)
+        .contentShape(Rectangle())
         .onTapGesture {
-            
             withAnimation(.spring(response:0.25, dampingFraction:0.8)) {
-                
                 toggleCategory(category)
-                
                 UIImpactFeedbackGenerator(style:.light).impactOccurred()
             }
         }
     }
     
-    
-    // MARK: Toggle Category
-    
     func toggleCategory(_ category:String) {
-        
         if selectedCategories.contains(category) {
-            
             selectedCategories.remove(category)
-            
         } else {
-            
             if selectedCategories.count < 3 {
-                
                 selectedCategories.insert(category)
             }
         }
     }
     
-    
-    // MARK: Icons
-    
     func iconFor(_ category:String) -> String {
-        
         switch category {
-            
-        case "Kesehatan":
-            return "waveform.path.ecg"
-            
-        case "Kebugaran":
-            return "dumbbell.fill"
-            
-        case "Pengetahuan":
-            return "book.fill"
-            
-        case "Keuangan":
-            return "dollarsign"
-            
-        case "Karir":
-            return "briefcase.fill"
-            
-        case "Mental":
-            return "brain.head.profile"
-            
-        default:
-            return "circle"
+        case "Kesehatan": return "waveform.path.ecg"
+        case "Kebugaran": return "dumbbell.fill"
+        case "Pengetahuan": return "book.fill"
+        default: return "circle"
         }
     }
-}
-
-#Preview {
-    CategorySelectionView(
-                userName: "Iyan"
-    )
 }

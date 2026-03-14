@@ -14,12 +14,7 @@ struct BottomNavbar: View {
         
         TabView {
             
-            // Habit Page
-            
-            HomeViews(
-                userName: userName,
-                selectedActivities: selectedActivities
-            )
+            HomeViews()
             .tabItem {
                 Label("Habit", systemImage: "checkmark.circle.fill")
             }
@@ -43,12 +38,13 @@ struct BottomNavbar: View {
             
             // Profile Page
             
-            ProfileView(userName: userName)
+            ProfileView(userName: userName, selectedActivities: selectedActivities)
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }
         }
         .tint(Color.primaryBrand)
+        .navigationBarBackButtonHidden(true)
     }
 }
 

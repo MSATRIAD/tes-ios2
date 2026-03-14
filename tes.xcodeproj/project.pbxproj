@@ -36,8 +36,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		36EF93FF2F602B280022C7B6 /* tes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = tes.app; path = "/Users/yusufdk2709/Documents/tes-ios2/build/Debug/tes.app"; sourceTree = "<absolute>"; };
-		36EF94342F6059060022C7B6 /* TesWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = TesWidgetExtension.appex; path = "/Users/yusufdk2709/Documents/tes-ios2/build/Debug-iphoneos/TesWidgetExtension.appex"; sourceTree = "<absolute>"; };
+		36522CCE2F62E8470008F5CD /* TesWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TesWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		36522CCF2F62E8470008F5CD /* tes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36EF94362F6059060022C7B6 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		36EF94382F6059060022C7B6 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -95,6 +95,8 @@
 				36EF94012F602B280022C7B6 /* tes */,
 				36EF943A2F6059060022C7B6 /* TesWidget */,
 				36EF94352F6059060022C7B6 /* Frameworks */,
+				36522CCE2F62E8470008F5CD /* TesWidgetExtension.appex */,
+				36522CCF2F62E8470008F5CD /* tes.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -132,7 +134,7 @@
 				36EF942E2F603ED00022C7B6 /* GoogleGenerativeAI */,
 			);
 			productName = tes;
-			productReference = 36EF93FF2F602B280022C7B6 /* tes.app */;
+			productReference = 36522CCF2F62E8470008F5CD /* tes.app */;
 			productType = "com.apple.product-type.application";
 		};
 		36EF94332F6059060022C7B6 /* TesWidgetExtension */ = {
@@ -154,7 +156,7 @@
 			packageProductDependencies = (
 			);
 			productName = TesWidgetExtension;
-			productReference = 36EF94342F6059060022C7B6 /* TesWidgetExtension.appex */;
+			productReference = 36522CCE2F62E8470008F5CD /* TesWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
