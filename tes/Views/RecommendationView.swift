@@ -12,6 +12,9 @@ struct RecommendationView: View {
     
     @AppStorage("selectedActivitiesData") var selectedActivitiesData: String = ""
     
+    // TAMBAHAN: State untuk menangkap pesan teguran AI (jika ketikan ngawur)
+    @State private var errorMessage: String? = nil
+    
     var userName: String = "Iyan"
     
     var body: some View {
@@ -31,36 +34,55 @@ struct RecommendationView: View {
                             .foregroundColor(Color(red: 0.29, green: 0.24, blue: 0.16)) // Cokelat gelap
                     }
                     
-                    ZStack(alignment: .bottomTrailing) {
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                            .background(Color.white)
-                            .cornerRadius(20)
-                        
-                        TextEditor(text: $userStory)
-                            .font(.system(size: 16))
-                            .padding(16)
-                            .frame(height: 200)
-                            .scrollContentBackground(.hidden)
-                        
-                        // Tombol Kirim di Dalam Kotak
-                        Button {
-                            askAI()
-                        } label: {
-                            if manager?.isProcessing == true {
-                                ProgressView().tint(.white)
-                            } else {
-                                Text("Kirim")
-                                    .fontWeight(.bold)
+                    VStack(alignment: .leading, spacing: 12) {
+                        ZStack(alignment: .bottomTrailing) {
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(errorMessage != nil ? Color.red.opacity(0.5) : Color.gray.opacity(0.3), lineWidth: 1)
+                                .background(Color.white)
+                                .cornerRadius(20)
+                            
+                            TextEditor(text: $userStory)
+                                .font(.system(size: 16))
+                                .padding(16)
+                                .frame(height: 200)
+                                .scrollContentBackground(.hidden)
+                                .onChange(of: userStory) { _ in
+                                    // Sembunyikan pesan error jika user mulai mengetik ulang
+                                    if errorMessage != nil {
+                                        errorMessage = nil
+                                    }
+                                }
+                            
+                            // Tombol Kirim di Dalam Kotak
+                            Button {
+                                askAI()
+                            } label: {
+                                if manager?.isProcessing == true {
+                                    ProgressView().tint(.white)
+                                } else {
+                                    Text("Kirim")
+                                        .fontWeight(.bold)
+                                }
                             }
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 10)
+                            .background(userStory.isEmpty ? Color.gray.opacity(0.3) : Color.primaryBrand)
+                            .foregroundColor(.white)
+                            .cornerRadius(12)
+                            .disabled(userStory.isEmpty || (manager?.isProcessing ?? false))
+                            .padding(16)
                         }
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 10)
-                        .background(userStory.isEmpty ? Color.gray.opacity(0.3) : Color.primaryBrand)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                        .disabled(userStory.isEmpty || (manager?.isProcessing ?? false))
-                        .padding(16)
+                        
+                        // MEMUNCULKAN PESAN TEGURAN DARI AI JIKA TIDAK JELAS
+                        if let errorMessage = errorMessage {
+                            HStack(alignment: .top, spacing: 8) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                Text(errorMessage)
+                            }
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.red)
+                            .padding(.horizontal, 4)
+                        }
                     }
                     
                     // DAFTAR SARAN KEGIATAN
@@ -158,18 +180,20 @@ struct RecommendationView: View {
     // MARK: - Actions
     
     private func askAI() {
+        errorMessage = nil // Reset pesan saat mengirim ulang
         Task {
             if let manager = manager {
-                let result = await manager.getRecommendations(userStory: userStory)
+                // KUNCI PERBAIKAN: Menggunakan fungsi baru dari BackendManager
+                let result = await manager.getRecommendationsOnly(userStory: userStory)
                 withAnimation {
-                    self.recommendations = result
+                    self.recommendations = result.recommendations
+                    self.errorMessage = result.errorMsg // Tangkap pesan error dari AI
                     self.selectedActivities = []
                 }
             }
         }
     }
     
-    // PERBAIKAN: Logika menyimpan ke SwiftData DAN AppStorage
     private func saveSelection() {
         var currentSelected: Set<String> = []
         if let data = selectedActivitiesData.data(using: .utf8),
@@ -178,11 +202,9 @@ struct RecommendationView: View {
         }
         
         for item in selectedActivities {
-            // Simpan ke database SwiftData
             let activity = ActivityItem(name: item.activity_name, category: item.category)
             modelContext.insert(activity)
             
-            // Tambahkan namanya ke daftar harian yang sedang aktif di Home
             currentSelected.insert(item.activity_name)
         }
         

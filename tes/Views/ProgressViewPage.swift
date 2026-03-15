@@ -14,13 +14,23 @@ struct ProgressViewPage: View {
     
     @Query private var allCompletedTasks: [CompletedTask]
     
-    @State private var selectedCategory = "Kesehatan"
+    // KUNCI PERBAIKAN 1: Jadikan "Semua" sebagai default dan tambahkan ke array
+    @State private var selectedCategory = "Semua"
     @State private var selectedTimeframe = "Mingguan"
     
-    let categories = ["Kesehatan", "Kebugaran", "Pengetahuan"]
+    let categories = ["Semua", "Kesehatan", "Kebugaran", "Pengetahuan"]
     let timeframes = ["Mingguan", "Bulanan"]
     
- 
+    @AppStorage("selectedActivitiesData") var selectedActivitiesData: String = ""
+    
+    var selectedActivities: Set<String> {
+        guard let data = selectedActivitiesData.data(using: .utf8),
+              let decoded = try? JSONDecoder().decode(Set<String>.self, from: data) else {
+            return []
+        }
+        return decoded
+    }
+    
     var dynamicChartData: [TaskData] {
         let daysCount = selectedTimeframe == "Mingguan" ? 7 : 30
         let dates = generatePastDates(days: daysCount)
@@ -72,14 +82,21 @@ struct ProgressViewPage: View {
                 }
                 
                 Spacer()
-                // PERBAIKAN 2: Tombol Testing (Plus) sudah dihapus agar bersih
             }
             .padding(.horizontal, 16)
             
-            Text("Rutinitasmu di kategori \(selectedCategory.lowercased()) terpantau dengan baik!")
-                .font(.body)
-                .foregroundColor(Color.textPrimary)
-                .padding(.horizontal, 16)
+            // KUNCI PERBAIKAN 2: Teks dinamis agar tata bahasanya pas saat memilih "Semua"
+            if selectedCategory == "Semua" {
+                Text("Rutinitasmu secara keseluruhan terpantau dengan baik!")
+                    .font(.body)
+                    .foregroundColor(Color.textPrimary)
+                    .padding(.horizontal, 16)
+            } else {
+                Text("Rutinitasmu di kategori \(selectedCategory.lowercased()) terpantau dengan baik!")
+                    .font(.body)
+                    .foregroundColor(Color.textPrimary)
+                    .padding(.horizontal, 16)
+            }
             
             // MARK: - Rentang Waktu
             Picker("Rentang Waktu", selection: $selectedTimeframe) {
@@ -108,7 +125,6 @@ struct ProgressViewPage: View {
                     }
                 }
                 .padding(20)
-                
                 .background(RoundedRectangle(cornerRadius: 16).fill(Color.cardBackground))
             }
             .frame(height: 300)
@@ -140,13 +156,20 @@ extension ProgressViewPage {
         return dates
     }
     
-
     private func fetchCompletedTasks(for date: Date, category: String) -> Int {
         let calendar = Calendar.current
         
         let count = allCompletedTasks.filter { task in
-
-            calendar.isDate(task.date, inSameDayAs: date) && task.category == category
+            // Pastikan tanggal sama dan aktivitas tersebut sedang aktif dipilih user
+            let isSameDate = calendar.isDate(task.date, inSameDayAs: date)
+            let isActivitySelected = selectedActivities.contains(task.activityName)
+            
+            // KUNCI PERBAIKAN 3: Lewati pengecekan nama kategori jika "Semua" yang dipilih
+            if category == "Semua" {
+                return isSameDate && isActivitySelected
+            } else {
+                return isSameDate && isActivitySelected && task.category == category
+            }
         }.count
         
         return count

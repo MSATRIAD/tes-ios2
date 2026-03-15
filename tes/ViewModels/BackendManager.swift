@@ -15,7 +15,7 @@ class BackendManager {
         self.aiService = GeminiService(apiKey: APIKey.default)
     }
     
-    func getRecommendations(userStory: String) async -> [ActivityRecommendation] {
+    func getRecommendationsOnly(userStory: String) async -> (recommendations: [ActivityRecommendation], errorMsg: String?) {
         isProcessing = true
         defer { isProcessing = false }
         
@@ -24,10 +24,16 @@ class BackendManager {
         let existingNames = existingItems.map { $0.name }
         
         do {
-            return try await aiService.fetchThreeRecommendations(story: userStory, existingNames: existingNames)
+            let result = try await aiService.fetchThreeRecommendations(story: userStory, existingNames: existingNames)
+            
+            if result.is_clear {
+                return (result.recommendations, nil)
+            } else {
+                return ([], result.message ?? "Maaf, ceritamu kurang jelas. Bisa jelaskan lagi?")
+            }
         } catch {
             print(" Error Fetching: \(error.localizedDescription)")
-            return []
+            return ([], "Terjadi kesalahan saat menghubungi sistem. Coba lagi ya.")
         }
     }
 }

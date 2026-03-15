@@ -50,7 +50,7 @@ struct ProfileView: View {
                                 Text("Tingkat")
                                 Text("konsistensimu")
                             }
-                            .font(.system(size: 26, weight: .medium))
+                            .font(.system(size: 24, weight: .medium))
                             .foregroundColor(Color.textPrimary)
                             
                             Spacer()

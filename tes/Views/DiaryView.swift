@@ -11,6 +11,14 @@ struct DiaryView: View {
     let calendar = Calendar.current
     let today = Date()
     
+    // MARK: - Format Bulan & Tahun (Contoh: "Maret, 2026")
+    var currentMonthYear: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "id_ID")
+        formatter.dateFormat = "MMMM, yyyy"
+        return formatter.string(from: today)
+    }
+    
     var body: some View {
         
         ZStack {
@@ -18,10 +26,23 @@ struct DiaryView: View {
             // MARK: - KONTEN UTAMA (KALENDER)
             VStack(spacing: 24) {
                 
+
                 Text("Diary")
-                    .font(.system(size:28, weight:.bold))
+                    .font(.system(size: 28, weight: .bold))
                     .foregroundColor(Color.textPrimary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                
+                // MARK: - Label Bulan & Tahun
+                Text(currentMonthYear)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Color.textPrimary)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                    )
+                    .frame(maxWidth: .infinity, alignment: .trailing)
                 
                 weekHeader
                 

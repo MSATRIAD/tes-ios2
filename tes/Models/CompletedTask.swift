@@ -13,7 +13,7 @@ class CompletedTask {
     var id: UUID = UUID()
     var activityName: String
     var category: String
-    var date: Date /
+    var date: Date
     
     init(activityName: String, category: String, date: Date = Date()) {
         self.activityName = activityName

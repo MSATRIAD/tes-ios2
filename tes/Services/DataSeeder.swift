@@ -19,17 +19,17 @@ struct DataSeeder {
             if existingCount == 0 {
                 let initialActivities = [
                     // Kategori Kesehatan
-                    ActivityItem(name: "Minum Air 2L", category: "Kesehatan"),
-                    ActivityItem(name: "Tidur 8 Jam", category: "Kesehatan"),
-                    ActivityItem(name: "Cek Kesehatan", category: "Kesehatan"),
+                    ActivityItem(name: "Makan satu buah dan sayuran", category: "Kesehatan"),
+                    ActivityItem(name: "Tidur 7–9 jam", category: "Kesehatan"),
+                    ActivityItem(name: "Hindari zat beracun", category: "Kesehatan"),
                     
                     // Kategori Kebugaran
-                    ActivityItem(name: "Lari 30 Menit", category: "Kebugaran"),
+                    ActivityItem(name: "Berjalan kaki setidaknya 10 menit", category: "Kebugaran"),
                     ActivityItem(name: "Plank 1 Menit", category: "Kebugaran"),
                     
                     // Kategori Pengetahuan
-                    ActivityItem(name: "Baca Artikel AI", category: "Pengetahuan"),
-                    ActivityItem(name: "Belajar Swift Syntax", category: "Pengetahuan")
+                    ActivityItem(name: "Baca Artikel", category: "Pengetahuan"),
+                    ActivityItem(name: "Membaca Buku 20 menit", category: "Pengetahuan")
                 ]
                 
                 for item in initialActivities {

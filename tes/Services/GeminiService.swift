@@ -1,7 +1,6 @@
 import Foundation
 import GoogleGenerativeAI
 
-// Model untuk hasil dari AI
 struct ActivityRecommendation: Codable, Hashable {
     let category: String
     let activity_name: String
@@ -9,6 +8,8 @@ struct ActivityRecommendation: Codable, Hashable {
 }
 
 struct AIResponse: Codable {
+    let is_clear: Bool
+    let message: String?
     let recommendations: [ActivityRecommendation]
 }
 
@@ -26,31 +27,35 @@ class GeminiService {
             systemInstruction: ModelContent(role: "system", parts: [
                 .text("""
                 Anda adalah asisten pemberi saran aktivitas kebiasaan (habit). 
-                Buatlah TEPAT 3 rekomendasi aktivitas baru berdasarkan cerita user.
                 
-                ATURAN KATEGORI KETAT:
-                Value untuk "category" HANYA BOLEH salah satu dari: "Kesehatan", "Kebugaran", atau "Pengetahuan".
-                Jangan membuat kategori lain.
+                TUGAS UTAMA:
+                1. Analisis cerita user. Apakah masuk akal dan bisa dipahami?
+                2. Jika cerita user TIDAK JELAS (berisi kata acak/gibberish, ketikan asal, atau sama sekali tidak berhubungan dengan rutinitas/habit/pengembangan diri), atur "is_clear" menjadi false, dan berikan pesan ramah di "message" yang meminta user menjelaskan ulang ceritanya.
+                3. Jika cerita JELAS, atur "is_clear" menjadi true, kosongkan "message", dan buat TEPAT 3 rekomendasi aktivitas baru.
+                
+                ATURAN KATEGORI KETAT (jika jelas):
+                Value untuk "category" HANYA BOLEH salah satu dari: "Kesehatan", "Kebugaran", atau "Pengetahuan". Jangan membuat kategori lain.
                 
                 Output harus berupa JSON murni tanpa format markdown:
                 {
+                  "is_clear": true/false,
+                  "message": "Pesan balasan jika cerita tidak jelas...",
                   "recommendations": [
                     {"category": "Kesehatan", "activity_name": "...", "reason": "..."},
-                    {"category": "Kebugaran", "activity_name": "...", "reason": "..."},
-                    {"category": "Pengetahuan", "activity_name": "...", "reason": "..."}
+                    {"category": "Kebugaran", "activity_name": "...", "reason": "..."}
                   ]
                 }
                 """)
             ])
         )
     }
-    
-    func fetchThreeRecommendations(story: String, existingNames: [String]) async throws -> [ActivityRecommendation] {
+
+    func fetchThreeRecommendations(story: String, existingNames: [String]) async throws -> AIResponse {
         let prompt = "Cerita: \(story). Jangan rekomendasikan aktivitas yang sudah ada: \(existingNames.joined(separator: ", "))"
         let response = try await model.generateContent(prompt)
         
         guard let text = response.text else {
-            return []
+            throw NSError(domain: "Gemini", code: 0, userInfo: [NSLocalizedDescriptionKey: "AI tidak merespon teks"])
         }
         
         var cleanedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -65,16 +70,16 @@ class GeminiService {
         cleanedText = cleanedText.trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard let data = cleanedText.data(using: .utf8) else {
-            return []
+            throw NSError(domain: "Gemini", code: 1, userInfo: [NSLocalizedDescriptionKey: "Gagal konversi ke Data"])
         }
         
         do {
             let decodedResponse = try JSONDecoder().decode(AIResponse.self, from: data)
-            return decodedResponse.recommendations
+            return decodedResponse
         } catch {
-            print("❌ Gagal parsing JSON Gemini: \(error.localizedDescription)")
+            print("Gagal parsing JSON Gemini: \(error.localizedDescription)")
             print("Teks mentah: \(cleanedText)")
-            return []
+            throw error
         }
     }
 }
